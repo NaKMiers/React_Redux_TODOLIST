@@ -196,6 +196,7 @@ class App extends Component {
                 .filter(task => filter.status === 'all' ? true : filter.status === task.status)
         } else {
             return tasks.filter(task => task.title.toLowerCase().includes(keyword))
+                .filter(task => filter.status === 'all' ? true : filter.status === task.status)
         }
     }
 

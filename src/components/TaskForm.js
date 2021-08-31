@@ -25,8 +25,6 @@ class TaskForm extends Component {
         this.setState({ [key]: value, createdAt: new Date() })
     }
 
-    onCancel = (e) => {}
-
     onSubmit = async function (e) {
         e.preventDefault()
         let { taskEditing } = this.props
@@ -34,7 +32,6 @@ class TaskForm extends Component {
             this.state.errors.push('❌Nothing here. Please enter something!❌')
             this.setState({ errors: this.state.errors })
         }
-
         if (taskEditing) {
             console.log(this.state)
             this.props.onSubmit(this.state, taskEditing.id)
