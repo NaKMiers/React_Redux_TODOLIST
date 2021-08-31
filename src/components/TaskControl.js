@@ -6,8 +6,11 @@ class TaskControl extends Component {
     render() {
         return (
             <div className="row task-control">
-                <TaskSearchControl />
-                <TaskSortControl />
+                <TaskSearchControl onSearch={ this.props.onSearch }/>
+                <TaskSortControl
+                    onGetTypeAndValue={this.props.onGetTypeAndValue}
+                    sort={ this.props.sort }
+                />
             </div>
         )
     }

@@ -2,6 +2,24 @@ import React, { Component } from 'react'
 import TaskItem from './TaskItem'
 
 class TaskList extends Component {
+    
+    constructor(props) {
+        super(props)
+        this.state = {
+            filterTitle: '',
+            filterStatus: 'all'
+        }
+    }
+
+    onChange = async function(e) {
+        let t = e.target
+        let key = t.name
+        let value = t.value.trim().toLowerCase()
+        
+        await this.setState({ [key]: value })
+        this.props.onGetFilterKey(this.state)
+    }
+
     render() {
         let elementTasks = this.props.tasks.map((task, index) => {
             return (
@@ -35,12 +53,14 @@ class TaskList extends Component {
                                     className="form-control"
                                     name="filterTitle"
                                     placeholder="Enter title to filter"
+                                    onChange={ this.onChange.bind(this) }
                                 />
                             </td>
                             <td>
                                 <select
                                     className="form-control"
                                     name="filterStatus"
+                                    onChange={ this.onChange.bind(this) }
                                 >
                                     <option value="all">All</option>
                                     <option value="show">Show</option>

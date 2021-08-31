@@ -15,6 +15,15 @@ class App extends Component {
             taskEditing: null,
             taskWillDelete: undefined,
             errorsForm: [],
+            keyword: '',
+            filter: {
+                title: '',
+                status: 'all'
+            },
+            sort: {
+                type: 'newest',
+                value: 1
+            },
         }
     }
 
@@ -67,6 +76,7 @@ class App extends Component {
                     id: this.generateId(),
                     title: task.title,
                     status: task.status,
+                    createdAt: task.createdAt
                 }
                 tasks.unshift(task)
                 this.setState({ tasks })
@@ -78,6 +88,8 @@ class App extends Component {
                     id: task.id,
                     title: task.title,
                     status: task.status,
+                    createdAt: task.createdAt,
+                    updatedAt: new Date()
                 }
                 tasks[i] = task
                 this.setState({ tasks })
@@ -88,8 +100,45 @@ class App extends Component {
         }
     }
 
-    // Task List
+    // Control
+    onSearch = keyword => {
+        this.setState({ keyword })
+    }
 
+    onGetTypeAndValue = (type, value) => {
+        console.log(type, value)
+        this.setState({
+            sort: { type, value }
+        })
+    }
+
+    onSort(type, value) {
+        console.log(type, value)
+        let { tasks } = this.state
+        if (type === 'newest') {
+            return tasks.sort((a,b) => {
+                if (a.createdAt > b.createdAt) return -value
+                else if (a.createdAt < b.createdAt) return value
+                else return 0
+            })
+        }
+        if (type === 'title') {
+            return tasks.sort((a,b) => {
+                if (a.title > b.title) return value
+                else if (a.title < b.title) return -value
+                else return 0
+            })
+        }
+        if (type === 'status') {
+            return tasks.sort((a,b) => {
+                if (a.status > b.status) return -value
+                else if (a.status < b.status) return value
+                else return 0
+            })
+        }
+    }
+
+    // Task List
     exchangeStatus = (taskId) => {
         let { tasks } = this.state
         let i = this.findIndex(taskId)
@@ -131,8 +180,27 @@ class App extends Component {
         }
     }
 
+    onGetFilterKey = filter => {
+        this.setState({
+            filter: {
+                title: filter.filterTitle,
+                status: filter.filterStatus
+            }
+        })
+    }
+    
+    onFilter(keyword) {
+        let { tasks, filter } = this.state
+        if (!keyword) {
+            return tasks.filter(task => task.title.toLowerCase().includes(filter.title))
+                .filter(task => filter.status === 'all' ? true : filter.status === task.status)
+        } else {
+            return tasks.filter(task => task.title.toLowerCase().includes(keyword))
+        }
+    }
+
     render() {
-        let { isDisplayForm } = this.state
+        let { tasks, isDisplayForm, keyword, sort } = this.state
 
         let elementTaskForm = isDisplayForm ? (
             <TaskForm
@@ -145,6 +213,9 @@ class App extends Component {
         ) : (
             ''
         )
+
+        tasks = this.onSort(sort.type, sort.value)
+        tasks = keyword ? this.onFilter(keyword) : this.onFilter()
 
         return (
             <div className="container">
@@ -166,12 +237,17 @@ class App extends Component {
                                 onCancel={this.onCancel}
                             />
 
-                            <TaskControl />
+                            <TaskControl 
+                                onSearch={ this.onSearch }
+                                onGetTypeAndValue={ this.onGetTypeAndValue }
+                                sort={ this.state.sort }
+                            />
                             <TaskList
-                                tasks={this.state.tasks}
-                                exchangeStatus={this.exchangeStatus}
-                                onEdit={this.onEdit.bind(this)}
-                                onShowModalDelete={this.onShowModalDelete}
+                                tasks={ tasks }
+                                exchangeStatus={ this.exchangeStatus }
+                                onEdit={ this.onEdit.bind(this) }
+                                onShowModalDelete={ this.onShowModalDelete }
+                                onGetFilterKey={ this.onGetFilterKey }
                             />
                         </div>
                     </div>

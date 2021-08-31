@@ -7,6 +7,7 @@ class TaskForm extends Component {
             title: '',
             status: 'show',
             errors: [],
+            createdAt: new Date()
         }
     }
 
@@ -21,7 +22,7 @@ class TaskForm extends Component {
         let t = e.target
         let key = t.name
         let value = t.value
-        this.setState({ [key]: value })
+        this.setState({ [key]: value, createdAt: new Date() })
     }
 
     onCancel = (e) => {}
@@ -35,11 +36,21 @@ class TaskForm extends Component {
         }
 
         if (taskEditing) {
+            console.log(this.state)
             this.props.onSubmit(this.state, taskEditing.id)
         } else {
+            console.log(this.state)
             this.props.onSubmit(this.state)
         }
         this.onClear()
+    }
+
+    onClear = () => {
+        this.setState({
+            title: '',
+            status: 'show',
+            errors: [],
+        })
     }
 
     render() {
