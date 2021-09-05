@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import actions from '../actions'
 
 class DeleteTaskModal extends Component {
    render() {
@@ -22,7 +24,7 @@ class DeleteTaskModal extends Component {
                         className='btn btn-danger'
                         data-dismiss='modal'
                         onClick={() =>
-                           this.props.onDelete(
+                           this.props.onDeleteTask(
                               this.props.taskWillDelete
                                  ? this.props.taskWillDelete
                                  : undefined
@@ -42,4 +44,8 @@ class DeleteTaskModal extends Component {
    }
 }
 
-export default DeleteTaskModal
+const mapDispatchToProps = dispatch => ({
+   onDeleteTask: taskId => dispatch(actions.deleteTask(taskId))
+})
+
+export default connect(null, mapDispatchToProps)(DeleteTaskModal)

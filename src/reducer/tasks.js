@@ -43,6 +43,7 @@ function task(state = initialState, action) {
             : (state[index].status = 'show')
          setLocalTasks(state)
          return state
+
       case types.ADD_TASK:
          let newTask = {
             ...action.task,
@@ -51,6 +52,19 @@ function task(state = initialState, action) {
          state.unshift(newTask)
          setLocalTasks(state)
          return state
+
+      case types.DELETE_TASK:
+         index = findIndex(action.taskId, state)
+         state.splice(index, 1)
+         setLocalTasks(state)
+         return state
+
+      case types.SAVE_TASK:
+         index = findIndex(action.task.id, state)
+         state.splice(index, 1, action.task)
+         setLocalTasks(state)
+         return state
+
       default:
          return state
    }

@@ -15,7 +15,16 @@ class TaskForm extends Component {
 
    componentDidMount() {
       let { taskEditing } = this.props
-      if (taskEditing) {
+      console.log(taskEditing)
+      if (taskEditing.id) {
+         this.setState({ ...taskEditing })
+      }
+   }
+
+   UNSAFE_componentWillReceiveProps() {
+      let { taskEditing } = this.props
+      console.log(taskEditing)
+      if (taskEditing.id) {
          this.setState({ ...taskEditing })
       }
    }
@@ -35,8 +44,8 @@ class TaskForm extends Component {
          this.state.errors.push('❌Nothing here. Please enter something!❌')
          this.setState({ errors: this.state.errors })
       } else {
-         if (taskEditing) {
-            this.props.onSubmit(this.state, taskEditing.id)
+         if (taskEditing.id) {
+            this.props.onSaveTask({ ...this.state, updatedAt: new Date() })
          } else {
             this.props.onAddTask(this.state)
          }
@@ -45,23 +54,31 @@ class TaskForm extends Component {
    }
 
    onClear = () => {
+      console.log('run onClear')
       this.setState({
          title: '',
          status: 'show',
          errors: []
       })
+      this.props.onEditTask({
+         id: '',
+         title: '',
+         status: 'show',
+         createdAt: ''
+      })
+      this.props.onCloseForm()
    }
 
    render() {
-      let { taskEditing } = this.props
+      let { taskEditing, onCloseForm } = this.props
 
       return (
          <div className='border border-warning task-form round-small pd-0'>
             <h2 className='form-heading'>
-               {taskEditing ? 'Edit Task' : 'Add Word'}
+               {taskEditing.id ? 'Edit Task' : 'Add Word'}
                <i
                   className='fas fa-backspace close-form-btn interactable'
-                  onClick={() => this.props.onToggleForm()}
+                  onClick={() => onCloseForm()}
                ></i>
             </h2>
             <form className='container' onSubmit={this.onSubmit.bind(this)}>
@@ -100,14 +117,14 @@ class TaskForm extends Component {
                      type='submit'
                      className='btn btn-warning mr-2 text-white'
                   >
-                     {taskEditing ? 'Save' : 'Add'}
+                     {taskEditing.id ? 'Save' : 'Add'}
                   </button>
                   <button
                      type='button'
                      className='btn btn-secondary ml-2'
-                     onClick={taskEditing ? this.props.onCancel : this.onClear}
+                     onClick={this.onClear}
                   >
-                     {taskEditing ? 'Cancel' : 'CLear'}
+                     Cancel
                   </button>
                </div>
             </form>
@@ -116,8 +133,13 @@ class TaskForm extends Component {
    }
 }
 
+const mapStateToProps = state => ({ taskEditing: state.taskEditing })
+
 const mapDispatchToProps = dispatch => ({
-   onAddTask: task => dispatch(actions.addTask(task))
+   onCloseForm: () => dispatch(actions.closeForm()),
+   onAddTask: task => dispatch(actions.addTask(task)),
+   onSaveTask: task => dispatch(actions.saveTask(task)),
+   onEditTask: task => dispatch(actions.editTask(task))
 })
 
-export default connect(null, mapDispatchToProps)(TaskForm)
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm)

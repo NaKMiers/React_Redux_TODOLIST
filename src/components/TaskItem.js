@@ -25,7 +25,10 @@ class TaskItem extends Component {
             <td className='text-center'>
                <button
                   className='btn btn-warning mr-2'
-                  onClick={() => this.props.onEdit(task.id)}
+                  onClick={() => {
+                     this.props.onOpenForm()
+                     this.props.onEditTask(task)
+                  }}
                >
                   Edit
                </button>
@@ -44,7 +47,10 @@ class TaskItem extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-   onUpdateStatus: taskId => dispatch(actions.updateStatus(taskId))
+   onOpenForm: () => dispatch(actions.openForm()),
+   onCloseForm: () => dispatch(actions.closeForm()),
+   onUpdateStatus: taskId => dispatch(actions.updateStatus(taskId)),
+   onEditTask: task => dispatch(actions.editTask(task))
 })
 
 export default connect(null, mapDispatchToProps)(TaskItem)
